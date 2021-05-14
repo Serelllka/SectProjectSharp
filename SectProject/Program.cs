@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Text.Json;
 
 namespace SectProject
@@ -22,13 +21,17 @@ namespace SectProject
 
         private static void PrintAllTasks(TaskManager tm)
         {
-            foreach (var it in tm.ListOfTasks)
+            foreach (var it1 in tm.ListOfGroups)
             {
-                Console.WriteLine($"Title: {it.TaskTitle}; Content: {it.TaskContent}\n\tid: {it.Uuid}");
-                Console.Write("Status: ");
-                Console.Write(it.Status ? "Completed!\n" : "Uncompleted!\n");
-                Console.WriteLine($"Deadline: {it.Deadline};");
-                Console.WriteLine("---------------------------------------");
+                Console.WriteLine($"GroupName: {it1.GroupTitle}");
+                foreach (var it2 in it1.ListOfTasks)
+                {
+                    Console.WriteLine($"\tTitle: {it2.TaskTitle}; Content: {it2.TaskContent}\n\tid: {it2.Uuid}");
+                    Console.Write("\tStatus: ");
+                    Console.WriteLine(it2.Status ? "Completed!" : "Uncompleted!");
+                    Console.WriteLine($"\tDeadline: {it2.Deadline};");
+                    Console.WriteLine("---------------------------------------");   
+                }
             }
         }
 
@@ -56,12 +59,19 @@ namespace SectProject
             tm.FindTaskById(id).Status = true;
         }
 
+        private static void PrintAllCompletedTasks(TaskManager tm, string groupName)
+        {
+            var group = tm.FindGroupByName(groupName);
+            Console.WriteLine($"GroupName: {group.GroupTitle}");
+            foreach (var it in group.ListOfTasks.Where(it => it.Status))
+            {
+                Console.WriteLine($"\tTitle: {it.TaskTitle}; Content: {it.TaskContent}");
+            }
+        }
+        
         private static void PrintAllCompletedTasks(TaskManager tm)
         {
-            foreach (var it in tm.ListOfTasks.Where(it => it.Status))
-            {
-                Console.WriteLine($"Title: {it.TaskTitle}; Content: {it.TaskContent}");
-            }
+            foreach (var it in tm.ListOfGroups) PrintAllCompletedTasks(tm, it.GroupTitle);
         }
 
         private static void CreateGroup(TaskManager tm, string groupName)
@@ -81,8 +91,8 @@ namespace SectProject
             var task = tm.FindTaskById(id);
             var group = tm.FindGroupByName(groupName);
             if (group == null && task == null) return;
-            
-            group.ListOfTasks.Add(task);
+
+            @group?.ListOfTasks.Add(task);
         }
         
         private static void DeleteFromGroup(TaskManager tm, string id, string groupName)
@@ -90,8 +100,8 @@ namespace SectProject
             var task = tm.FindTaskById(id);
             var group = tm.FindGroupByName(groupName);
             if (group == null && task == null) return;
-            
-            group.ListOfTasks.Remove(task);
+
+            @group?.ListOfTasks.Remove(task);
         }
         
         private static void Main(string[] args)
@@ -134,7 +144,10 @@ namespace SectProject
                             SetTaskAsCompletedById(taskManager, command[1]);
                             break;
                         case "/completed":
-                            PrintAllCompletedTasks(taskManager);
+                            if (command.Count > 2)
+                                PrintAllCompletedTasks(taskManager, command[2]);
+                            else
+                                PrintAllCompletedTasks(taskManager);
                             break;
                         case "/create-group":
                             CreateGroup(taskManager, command[1]);
