@@ -44,8 +44,6 @@ namespace SectProject
         public string TaskTitle { get; set; }
         public string TaskContent { get; set; }
         public string Uuid { get; set;  }
-        public string GroupId { get; set; }
-        
         public DateTime Deadline { get; set; }
         public bool Status { get; set; }
         public List<Task> ListOfSubTasks { get; set; }

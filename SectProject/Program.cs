@@ -27,12 +27,14 @@ namespace SectProject
                 Console.WriteLine($"Title: {it.TaskTitle}; Content: {it.TaskContent}\n\tid: {it.Uuid}");
                 Console.Write("Status: ");
                 Console.Write(it.Status ? "Completed!\n" : "Uncompleted!\n");
+                Console.WriteLine($"Deadline: {it.Deadline};");
+                Console.WriteLine("---------------------------------------");
             }
         }
 
         private static void DeleteById(TaskManager tm, string id)
         {
-            tm.Delete(id);
+            tm.DeleteTask(id);
         }
 
         private static void SaveToFile(TaskManager tm, string fileName = "../../../HATE_GACHI_FOREVER.txt")
@@ -58,7 +60,7 @@ namespace SectProject
         {
             foreach (var it in tm.ListOfTasks.Where(it => it.Status))
             {
-                Console.WriteLine($"Title: {it.TaskTitle}; Content: {it.TaskContent}\n\tid: {it.Uuid}");
+                Console.WriteLine($"Title: {it.TaskTitle}; Content: {it.TaskContent}");
             }
         }
 
@@ -71,9 +73,7 @@ namespace SectProject
         
         private static void DeleteGroup(TaskManager tm, string groupName)
         {
-            var title = tm.FindGroupByName(groupName);
-            if (title is null) return;
-            tm.ListOfGroups.Remove(title);
+            tm.DeleteGroup(groupName);
         }
         
         private static void AddToGroup(TaskManager tm, string id, string groupName)
@@ -82,7 +82,6 @@ namespace SectProject
             var group = tm.FindGroupByName(groupName);
             if (group == null && task == null) return;
             
-            task.GroupId = group.GroupId;
             group.ListOfTasks.Add(task);
         }
         
@@ -92,7 +91,6 @@ namespace SectProject
             var group = tm.FindGroupByName(groupName);
             if (group == null && task == null) return;
             
-            task.GroupId = null;
             group.ListOfTasks.Remove(task);
         }
         
