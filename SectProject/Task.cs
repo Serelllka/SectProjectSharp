@@ -48,7 +48,6 @@ namespace SectProject
         
         public DateTime Deadline { get; set; }
         public bool Status { get; set; }
-
         public List<Task> ListOfSubTasks { get; set; }
     }
 }
